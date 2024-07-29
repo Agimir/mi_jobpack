@@ -1,0 +1,2 @@
+Shared, Data = {}, {}
+Debug = true

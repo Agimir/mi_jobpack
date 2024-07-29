@@ -7,9 +7,7 @@ Data.Location = vec4(133.162, 96.645, 83.507, 159.803)
 Data.Vehicle = {
     model = 'nspeedo', livery = 4,
     spawn = vec4(117.250, 99.163, 80.735, 70.156),
-    despawn = {
-        size = vec3(5.0, 8.0, 5.0), rotation = 340.0,
-    }
+    despawn = vec3(5.0, 8.0, 5.0)
 }
 
 Data.Uniform = {
