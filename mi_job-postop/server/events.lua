@@ -9,8 +9,20 @@ local getNetId = function(ent)
     return vNetId
 end
 
-lib.callback.register('mijob:post:giveBoxes', function(source)
-    Inventory:AddItem(source, Data.Items.ob1.item, 1)
+lib.callback.register('mijob:post:giveMailBag', function(source)
+    Inventory:AddItem(source, Data.Items.ob1.item, 1, Data.Items.ob1.meta )
+end)
+
+lib.callback.register('mijob:post:removeMailBag', function(source)
+    Inventory:RemoveItem(source, Data.Items.ob1.item, 1, true)
+end)
+
+lib.callback.register('mijob:post:pay:stop', function(source)
+    Inventory:AddItem(source, 'money', math.random(15, 45), true)
+end)
+
+lib.callback.register('mijob:post:pay:bonus', function(source)
+    Inventory:AddItem(source, 'money', math.random(150, 250), true)
 end)
 
 -- vehicle functions - livery - 5

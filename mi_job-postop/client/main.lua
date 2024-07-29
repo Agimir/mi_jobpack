@@ -3,18 +3,33 @@ local isSpawned = false
 local pedops = {
     {
         name = 'veh_create',
-        icon = 'fa-solid fa-car',
+        icon = 'fa-solid fa-truck-fast',
         groups = Data.Group,
-        label = 'Request work vehicle',
+        label = 'Begin Route',
         canInteract = function(_, distance)
             return distance < 1.5 and not isSpawned
         end,
         onSelect = function()
             isSpawned = true
             local vehicle = lib.callback.await('mijob:create:vehicle', false, source)
-            print(NetworkGetEntityFromNetworkId(vehicle))
-            lib.callback.await('mijob:post:giveBoxes', false, source)
+            print(NetworkGetEntityFromNetworkId(vehicle)) Count, Tasks = SetCount()
+            -- lib.callback.await('mijob:post:giveMailBag', false, source)
             TriggerEvent('mijob:post:selecttask')
+        end
+      },
+      {
+        name = 'veh_create',
+        icon = 'fa-solid fa-check',
+        groups = Data.Group,
+        label = 'Finish Route',
+        canInteract = function(_, distance)
+            return distance < 1.5 and isSpawned and Count == 0
+        end,
+        onSelect = function()
+            isSpawned = false
+            local vehicle = lib.callback.await('mijob:delete:vehicle', false, source)
+            --lib.callback.await('mijob:post:removeMailBag', false, source)
+            TriggerEvent('mijob:post:Payout')
         end
       },
 }
@@ -53,14 +68,3 @@ LoadPed()
     end)
 ]]
 
-RegisterCommand('postop', function()
-    lib.callback.await('mijob:create:vehicle', false, source)
-end, false)
-
-RegisterCommand('postopveh', function()
-    lib.callback.await('mijob:delete:vehicle', false, source)
-end, false)
-
-RegisterCommand('postoptest', function()
-    TriggerEvent('mijob:post:selecttask')
-end, false)
