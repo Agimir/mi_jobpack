@@ -1,3 +1,24 @@
+-- variables
+local isSpawned = false
+local pedops = {
+    {
+        name = 'veh_create',
+        icon = 'fa-solid fa-car',
+        groups = Data.Group,
+        label = 'Request work vehicle',
+        canInteract = function(_, distance)
+            return distance < 1.5 and not isSpawned
+        end,
+        onSelect = function()
+            isSpawned = true
+            local vehicle = lib.callback.await('mijob:create:vehicle', false, source)
+            print(NetworkGetEntityFromNetworkId(vehicle))
+            lib.callback.await('mijob:post:giveBoxes', false, source)
+            TriggerEvent('mijob:post:selecttask')
+        end
+      },
+}
+
 --  load blip
 function LoadBlips()
     local data, loc = Data.Blip, Data.Location
@@ -18,16 +39,28 @@ function LoadPed()
     FreezeEntityPosition(ped.obj, true)
     SetBlockingOfNonTemporaryEvents(ped.obj, true)
     SetEntityInvincible(ped.obj, true)
-    --exports.ox_target:addLocalEntity(ped, workped)
+    exports.ox_target:addLocalEntity(ped.obj, pedops)
 end
 LoadPed()
 
--- select task
-local function pickRandomTask(obj_list)
-    local keys = {}
-    for key in pairs(obj_list) do
-        table.insert(keys, key)
-    end
-    local random_key = keys[math.random(#keys)]
-    return obj_list[random_key], random_key
-end
+--[[ working on vehicle properties
+    RegisterNetEvent('mijob:post:setVehProperties')
+    AddEventHandler('mijob:post:setVehProperties', function(ent, data)
+        if not DoesEntityExist(ent) then print('no vehicle')
+        else
+            lib.setVehicleProperties(NetToVeh(ent), data)
+        end
+    end)
+]]
+
+RegisterCommand('postop', function()
+    lib.callback.await('mijob:create:vehicle', false, source)
+end, false)
+
+RegisterCommand('postopveh', function()
+    lib.callback.await('mijob:delete:vehicle', false, source)
+end, false)
+
+RegisterCommand('postoptest', function()
+    TriggerEvent('mijob:post:selecttask')
+end, false)
